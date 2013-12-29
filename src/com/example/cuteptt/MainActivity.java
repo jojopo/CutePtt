@@ -2,7 +2,9 @@ package com.example.cuteptt;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.view.Menu;
+import android.view.View; //view
 
 public class MainActivity extends Activity {
 
@@ -19,4 +21,9 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
+	public void login_submit(View view)
+	{
+		Intent intent = new Intent(this, DisplayMyFavoriteActivity.class);
+		startActivity(intent);
+	}
 }

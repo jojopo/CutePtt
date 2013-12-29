@@ -22,6 +22,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.example.cuteptt.DisplayMyFavoriteActivity"
+            android:label="@string/title_activity_display_my_favorite" >
+        </activity>
     </application>
 
 </manifest>
