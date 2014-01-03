@@ -7,25 +7,26 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="17" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme" android:name=".MyGlobal">
         <activity
             android:name="com.example.cuteptt.MainActivity"
             android:label="@string/app_name" >
+        </activity>
+        <activity android:name="com.example.cuteptt.DisplayMyFavoriteActivity" android:label="@string/title_activity_display_my_favorite">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.example.cuteptt.DisplayMyFavoriteActivity"
-            android:label="@string/title_activity_display_my_favorite" >
-        </activity>
+        
     </application>
 
 </manifest>

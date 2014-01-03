@@ -8,9 +8,40 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".DisplayMyFavoriteActivity" >
 
-    <TextView
+    <ProgressBar
+        android:id="@+id/progressBar_loginStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:maxWidth="20dip"        
+        android:minWidth="20dip"
+        android:maxHeight="20dip"
+        android:minHeight="20dip"
+        android:layout_toLeftOf="@+id/textView_loginstatus"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/textView_loginstatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="14dp"
+        android:text="TextView" />
+
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/button_logout" >
+    </ListView>
+
+    <Button
+        android:id="@+id/button_logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:onClick="logout"
+        android:text="Button" />
 
 </RelativeLayout>

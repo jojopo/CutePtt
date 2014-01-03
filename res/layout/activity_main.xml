@@ -13,7 +13,8 @@
         android:id="@+id/accountEditText"
         android:layout_width="142dp"
         android:layout_height="wrap_content"
-        android:ems="10" >
+        android:ems="10"
+        android:visibility="visible" >
 
         <requestFocus />
     </EditText>
@@ -22,13 +23,15 @@
         android:id="@+id/passwordEditText"
         android:layout_width="142dp"
         android:layout_height="wrap_content"
-        android:ems="10" />
+        android:ems="10"
+        android:visibility="visible" />
 
     <Button
         android:id="@+id/loginBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="login_submit"
-        android:text="Button" />
+        android:text="Button1"
+        android:visibility="visible" />
 
 </LinearLayout>
