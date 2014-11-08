@@ -32,17 +32,23 @@ public class SocketClient extends java.lang.Thread{
 	int debug;
 	
 	byte[][] data;
+	int[][] colorMap;
 	int cursorRow, cursorColumn;
 	
 	String hostName;
 	int port;
 	InetAddress address;
 
+	int light = 0;
+	int foregroundColor = 7;
+	int backgroundColor = 0;
+
 	public SocketClient()
 	{
 		//client = socket;
 
 		data = new byte[ROW][COL];
+		colorMap = new int[ROW][COL];
 		cursorRow = 0;
 		cursorColumn = 0;
 		parsingData = false;
@@ -51,6 +57,13 @@ public class SocketClient extends java.lang.Thread{
 		
 		hostName = "ptt.cc";
 		port = 23;
+
+		for(int i=0; i<ROW; i++)
+			for(int j=0; j<COL; j++)
+			{
+				colorMap[i][j] = 0x007;
+				data[i][j] = ' ';
+			}
 	}
 
 	public void terminal()
@@ -83,6 +96,7 @@ public class SocketClient extends java.lang.Thread{
 		for(int i=0; i<length; i++)
 		{
 			data[cursorRow][cursorColumn] = writeByte[i];
+			colorMap[cursorRow][cursorColumn] = foregroundColor + (backgroundColor << 4) + (light << 8);
 		}
 		cursorColumn += length;
 	}
@@ -92,7 +106,9 @@ public class SocketClient extends java.lang.Thread{
 		try{
 		//if(debug == 0) System.out.printf("<row:%d col:%d> ", cursorRow, cursorColumn);
 		data[cursorRow][cursorColumn] = writeByte;
+		colorMap[cursorRow][cursorColumn] = foregroundColor + (backgroundColor << 4) + (light << 8);
 		cursorColumn++;
+
 		//System.out.printf("col:%d\n", cursorColumn);
 		}catch(java.lang.ArrayIndexOutOfBoundsException e)
 		{
@@ -107,6 +123,7 @@ public class SocketClient extends java.lang.Thread{
 			for(int j=0; j<COL; j++)
 			{
 				data[i][j] = ' ';
+				colorMap[i][j] = 0x007;
 			}
 		}
 	}
@@ -114,13 +131,14 @@ public class SocketClient extends java.lang.Thread{
 	public void clearLineFromCursorRight()
 	{
 		if(cursorRow>=ROW || cursorColumn>=COL) {
-			System.out.printf("<over row:%d col:%d> ", cursorRow, cursorColumn);
+			//System.out.printf("<over row:%d col:%d> ", cursorRow, cursorColumn);
 			debug = 1;
 			return;
 		}
 		for(int i=cursorColumn; i<COL; i++)
 		{
 			data[cursorRow][i] = ' ';
+			colorMap[cursorRow][i] = 0x007;
 		}
 	}
 
@@ -129,7 +147,8 @@ public class SocketClient extends java.lang.Thread{
 		for(int i=0; i<COL; i++)
 		{
 			if(i == 0)
-				System.out.printf("[--]%d", i%10);
+				//System.out.printf("[--]%d", i%10);
+				System.out.printf("%d", i%10);
 			else
 				System.out.printf("%d", i%10);
 			if(i == COL-1) System.out.printf("\n");
@@ -138,10 +157,60 @@ public class SocketClient extends java.lang.Thread{
 		{
 			try{
 			String str = new String(data[i], 0, COL, "big5");
-			System.out.printf("[%02d]%s\n", i, str);
+if(true) {
+			//System.out.printf("[%02d]%s\n", i, str);
+}else{
+			int k = 0;
+			for(int j=0; j<str.length(); j++)
+			{
+				if(colorMap[i][j+k] != 0x007)
+				{
+					//System.out.printf("*[%d;3%d;4%dm", (colorMap[i][j+k] & 0x100) >> 8, colorMap[i][j+k] & 0x0f, (colorMap[i][j+k] & 0xf0) >> 4);
+					System.out.printf("\u001b[%d;3%d;4%dm", (colorMap[i][j+k] & 0x100) >> 8, colorMap[i][j+k] & 0x0f,   							                                                            (colorMap[i][j+k] & 0xf0) >> 4);
+				}
+				System.out.printf("%c", str.charAt(j));
+
+				if(colorMap[i][j+k] != 0x007)
+						System.out.printf("\u001b[0m");
+
+				if(str.charAt(j) > 256)
+					k++;
+			}
+			System.out.printf("\n");
+}
 			}catch(java.io.UnsupportedEncodingException e)
 			{}
 		}
+	}
+
+	public void displayColorMap()
+	{
+		for(int i=0; i<COL; i++)
+                {
+                        if(i == 0)
+                                System.out.printf("[--]%d", i%10);
+                        else
+                                System.out.printf("%d", i%10);
+                        if(i == COL-1) System.out.printf("\n");
+                }
+
+		for(int i=0; i<ROW; i++)
+                {
+                        //try{
+
+                        for(int j=0; j<COL; j++)
+                        {
+                                //if(colorMap[i][j] != 0x007)
+                                {
+                                        System.out.printf("%d", colorMap[i][j] & 0x0f);
+                                }
+
+                        }
+                        System.out.printf("\n");
+
+                        //}//catch(java.io.UnsupportedEncodingException e)
+                        {}
+                }
 	}
 
 	public void displayDataN(int n)
@@ -160,7 +229,7 @@ public class SocketClient extends java.lang.Thread{
 	{
 		if( (row > ROW-1) || (col > COL-1) )
 		{
-			System.out.printf("incorrect row or col (%d,d)\n", row, col);
+			//System.out.printf("incorrect row or col (%d,d)\n", row, col);
 			return "";
 		}
 		byte[] bytes = new byte[length];
@@ -210,8 +279,8 @@ public class SocketClient extends java.lang.Thread{
 
 	public boolean isInWelcome()
 	{
-		String s1 = getSpecifyData(20, 6, 18);
-		if (s1.compareTo("歡迎您再度拜訪本站") == 0)
+		String s1 = getSpecifyData(20, 6, 14);
+		if (s1.compareTo("歡迎您再度拜訪") == 0)
 		{
 			s1 = getSpecifyData(LAST_ROW, 47, 2);
 			if (s1.compareTo("▄") == 0)
@@ -318,6 +387,18 @@ public class SocketClient extends java.lang.Thread{
 		else
 			return false;
 	}
+	
+	public boolean isInBoardSetting()
+    {
+            String s1 = getSpecifyData(4, 0, COL);
+            int offset = s1.indexOf("》");
+            if(offset != -1)
+            {
+                    if(s1.substring(offset+1, offset+5).compareTo("看板設定") == 0)
+                            return true;
+            }
+            return false;
+    }
 
 	public String getCurrentBoard()
 	{
@@ -340,7 +421,7 @@ public class SocketClient extends java.lang.Thread{
 
 	public int getCursorRow()
 	{
-		System.out.printf("cursorRow:%d\n", cursorRow);
+		//System.out.printf("cursorRow:%d\n", cursorRow);
 		return cursorRow;
 	}
 
@@ -374,6 +455,7 @@ public class SocketClient extends java.lang.Thread{
 	{
 		int number = -1;
 		String sNumber = getSpecifyData(FIRST_LIST_ROW, 2, 5).trim();
+		//String sNumber = getSpecifyData(FIRST_LIST_ROW, 1, 6).trim();
 		if(Tool.isNumber(sNumber))
 		{
 			number = Integer.parseInt(sNumber);
@@ -388,6 +470,7 @@ public class SocketClient extends java.lang.Thread{
 		for(int i=LAST_LIST_ROW; i>=FIRST_LIST_ROW; i--)
 		{
 			String sNumber = getSpecifyData(i, 2, 5).trim();
+			//String sNumber = getSpecifyData(i, 1, 6).trim();
 			if(Tool.isNumber(sNumber))
 			{
 				number = Integer.parseInt(sNumber);
@@ -431,16 +514,57 @@ public class SocketClient extends java.lang.Thread{
 		}
 		return number;
 	}
+	
+	public int getBottomItemsNumberThisPage()
+	{
+		int cnt = 0;
+		try{
+		for(int i=LAST_LIST_ROW; i>=FIRST_LIST_ROW; i--)
+		{
+			String sNumber = getSpecifyData(i, 2, 5).trim();
+			//System.out.printf("sNumber:%s\n", sNumber);
+			if(Tool.isNumber(sNumber))
+			{
+				//cnt++;
+			}
+			else if(sNumber.matches("[^ ]"))
+			{
+				if(sNumber.compareTo("★") == 0)
+				{
+					cnt++;
+				}
+				else System.out.printf("%s not blank\n", sNumber);
+			}
+		}
+		} catch(java.lang.NumberFormatException e)
+		{
+			cnt = 0;
+		}
+		return cnt;
+	}
 
 	public int getLineNumberShown(int first)
 	{
+		if(!isInArticle())
+		{
+			//System.out.printf("getLineNumberShown error, not in article\n");
+			return 0;
+		}
 		int ret;
 		String bottomString = getSpecifyData(LAST_ROW, 0, COL);
 		int offset = bottomString.lastIndexOf("第 ") + 2;
 		int offset2 = bottomString.lastIndexOf(" 行");
 		//System.out.printf("offset:%d offset2:%d\n", offset, offset2);
+		//System.out.printf("bottomString:%s\n", bottomString);
+		if ((offset == -1) || (offset2 == -1))
+		{
+			//System.out.printf("bottomString:%s\n", bottomString);
+			this.displayData();
+			return -1;
+		}
 		String r = bottomString.substring(offset, offset2);
 		//System.out.printf("%s\n", r);
+
 		String afterSplit[] = r.split("~");
 		if(first == 1)
 			ret = Integer.parseInt(afterSplit[0]);
@@ -461,11 +585,54 @@ public class SocketClient extends java.lang.Thread{
 
 	public int getArticleReadPersent()
 	{
+		if(!isInArticle())
+		{
+			//System.out.printf("getArticleReadPersent error, not in article\n");
+			return 0;
+		}
 		String bottomString = getSpecifyData(LAST_ROW, 0, COL);
+		//System.out.printf("bottomString:%s\n", bottomString);
 		int offset = bottomString.indexOf("(") + 1;
 		int offset2 = bottomString.indexOf("%)");
 		String r = bottomString.substring(offset, offset2).trim();
 		return Integer.parseInt(r);
+	}
+	
+	public boolean isPushLine(int line)
+	{
+		String s = getSpecifyData(line, 67, 11);
+		return s.matches("[01][0-9]/[0-3][0-9] [0-2][0-9]:[0-6][0-9]");
+	}
+	
+	public String getPushAuthor(int line)
+	{
+		String s = getSpecifyData(line, 0, COL);
+		int offset = s.indexOf(":");
+		return s.substring(2, offset);
+	}
+	
+	public String getPushContent(int line)
+	{
+		String s = getSpecifyData(line, 0, 67);
+		int offset = s.indexOf(":") + 1;
+		return s.substring(offset).trim();
+	}
+	
+	int getPushType(int line)
+	{
+		int type = 0;
+		String s = getSpecifyData(line, 0, 2);
+		if(s.compareTo("推") == 0)
+			type = 1;
+		else if(s.compareTo("噓") == 0)
+			type = 2;
+		
+		return type;
+	}
+	
+	String getPushTypeStr(int line)
+	{
+		return getSpecifyData(line, 0, 2);
 	}
 
 	public boolean isShowCrOptionEnable()
@@ -503,7 +670,7 @@ public class SocketClient extends java.lang.Thread{
 		}
 		else
 		{
-			System.out.printf("not in article, not expected case\n");
+			//System.out.printf("not in article, not expected case\n");
 			return false;
 		}
 		return isEnable;
@@ -520,7 +687,7 @@ public class SocketClient extends java.lang.Thread{
 			send(query);
 			while(isParsingData() || !isInArticleOptionSetting())
 			{
-				Thread.sleep(10);
+				Thread.sleep(1);
 			}
 
 			String s1 = getSpecifyData(19, 34, 1);
@@ -543,7 +710,7 @@ public class SocketClient extends java.lang.Thread{
 			send(query);
 			while(isParsingData() || !isInArticle())
 			{
-				Thread.sleep(10);
+				Thread.sleep(1);
 			}
 
 			} catch(java.lang.InterruptedException e)
@@ -560,12 +727,16 @@ public class SocketClient extends java.lang.Thread{
 	{
 		int ptr = 0;
 		//byte[] f = Arrays.copyOf(oriBuf, length*3);
-		byte[] f = new byte[length*3];
-		System.out.printf("len:%d\n", length);
+		byte[] f = new byte[length*5];
+		//System.out.printf("len:%d\n", length);
 
 		int state = 0;
 		String tag = "";
 		int line = 0;
+
+		//int light = 0;
+		//int foregroundColor = 0;
+		//int backgroundColor = 0;
 
 		if(lastTag.length() > 0)
 		{
@@ -622,10 +793,14 @@ public class SocketClient extends java.lang.Thread{
 							{
 								for(int m=0; m<COL-1; m++)
 								{
-									if(k != ROW-1)
+									if(k != ROW-1) {
 										data[k][m] = data[k+1][m];
-									else
+										colorMap[k][m] = colorMap[k+1][m];
+									}
+									else {
 										data[k][m] = ' ';
+										colorMap[k][m] = 0x007;
+									}
 								}
 							}
 						}
@@ -663,6 +838,51 @@ public class SocketClient extends java.lang.Thread{
 						//System.out.printf("%s", tag);
 						//System.out.printf("\u001b[1;31m");
 						//break;
+						String[] afterSplit = (String[])tag.substring(2).split("[;|m]");
+						//System.out.printf(" %d\n", afterSplit.length);
+						for(int k=0; k<afterSplit.length; k++)
+						{
+							String code = afterSplit[k];
+							//System.out.printf("code:%s %d\n", code, code.length());
+							if(code.length() == 0)
+							{
+								light = 0;
+								foregroundColor = 7;
+								backgroundColor = 0;
+							}
+							else if(code.length() == 1)
+							{
+								int fontType = Integer.parseInt(code);
+								if(fontType == 0)
+								{
+									light = 0;
+									foregroundColor = 7;
+									backgroundColor = 0;
+								}
+								else if(fontType == 1)
+									light = 1;
+								//System.out.printf("fontType = %d\n", fontType);
+							}
+							else if(code.length() == 2)
+							{
+								String colorCode = code.substring(1);
+								int colorType = Integer.parseInt(code.substring(1));
+								if(code.charAt(0) == '3')
+									foregroundColor = colorType;
+								else if(code.charAt(0) == '4')
+									backgroundColor = colorType;
+
+								//System.out.printf("colorType = %d\n", colorType);
+
+								
+							}
+
+						}
+						if(afterSplit.length == 0)
+						{
+							light = 0;foregroundColor = 7;backgroundColor = 0;
+						}
+						//System.out.printf("\u001b%s", tag.substring(1));
 						tag = "";
 					}
 					else if (ch == 'H')
@@ -728,7 +948,7 @@ public class SocketClient extends java.lang.Thread{
 			try{
 			String data2;
 			data2 = new String(f, 0, ptr, "big5");
-			System.out.printf("%s", data2);
+			//System.out.printf("%s", data2);
 			} catch (java.io.IOException e)
 			{}
 		}
@@ -740,11 +960,11 @@ public class SocketClient extends java.lang.Thread{
 		}
 
 		if(isInBoardList())
-			System.out.printf("InBoardList\n");
+			;//System.out.printf("InBoardList\n");
 		else if(isInPostList())
-			System.out.printf("InPostList\n");
+			;//System.out.printf("InPostList\n");
 		else if(isInSubList())
-			System.out.printf("InSubList\n");
+			;//System.out.printf("InSubList\n");
 
 		parsingData = false;
 		return ptr;
@@ -781,7 +1001,8 @@ public class SocketClient extends java.lang.Thread{
 	public void closeSocket()
 	{
 		try {
-		client.close();
+		if(client != null)
+			client.close();
 		} catch(java.io.IOException e)
 		{}
 	}
@@ -838,7 +1059,6 @@ if(1 == 0)
 
 }
 
-
 class Constant{
 	public static final String ANSI_ARROW_LEFT = "\u001b[D";
 	public static final String ANSI_ARROW_DOWN = "\u001b[B";
@@ -863,10 +1083,12 @@ class Tool{
 class PostList{
 	List<PostInfo> list;
 	String boardName;
+	int latestLoadingNumber;
 	public PostList()
 	{
 		list = new ArrayList<PostInfo>();
 		boardName = "";
+		latestLoadingNumber = 0;
 	}
 }
 
@@ -875,6 +1097,11 @@ class PostInfo{
 	public String date;
 	public String author;
 	public String title;
+	public String titleClass;
+	public String titleSimple;
+	public int like;
+	public char readFlag;
+	public String postClass;
 
 	public String getSpecifyBytes(byte[] data, int offset, int length)
 	{
@@ -900,7 +1127,90 @@ class PostInfo{
 		author = getSpecifyBytes(data, 17, 13);
 		title = getSpecifyBytes(data, 30, 50);
 
+		if ( title.length() >= 6  && (title.charAt(2) == '[') && (title.charAt(5) == ']') )
+		{
+			titleClass = getSpecifyBytes(data, 34, 4);
+			titleSimple = title.substring(6).trim();
+			title = null;
+		}
+		else if ( title.length() >= 7  && (title.charAt(3) == '[') && (title.charAt(6) == ']') && (title.substring(0, 2).compareTo("R:") == 0))
+		{
+			titleClass = getSpecifyBytes(data, 34, 4);
+			titleSimple = "R: " + title.substring(7).trim();
+			//System.out.printf("titleSimple:%s\n", titleSimple);
+			title = null;
+		}
+		else if (title.length() >= 3 && (title.charAt(0) == '□'))
+		{
+			titleSimple = title.substring(1).trim();
+			title = null;
+			//System.out.printf("titleSimple:%s\n", titleSimple);
+		}
 
+		String sLike = getSpecifyBytes(data, 9, 2);
+		if(Tool.isNumber(sLike))
+		{
+			like = Integer.parseInt(sLike);
+		}
+		else if(sLike.compareTo("爆") == 0)
+		{
+			like = 100;
+		}
+
+		String sFlag = getSpecifyBytes(data, 8, 1);
+		if(sFlag.length() > 0)
+			readFlag = sFlag.charAt(0);
+
+		postClass = getSpecifyBytes(data, 30, 2);
+		return 0;
+	}
+	
+	public int fill(byte[] data, int fake)
+	{
+		if(Tool.isNumber(getSpecifyBytes(data, 2, 5)))
+			number = Integer.parseInt(getSpecifyBytes(data, 2, 5));
+		else if(getSpecifyBytes(data, 2, 5).compareTo("★") == 0)
+			number = fake;
+
+		date = getSpecifyBytes(data, 11, 5);
+		author = getSpecifyBytes(data, 17, 13);
+		title = getSpecifyBytes(data, 30, 50);
+
+		if ( title.length() >= 6  && (title.charAt(2) == '[') && (title.charAt(5) == ']') )
+		{
+			titleClass = getSpecifyBytes(data, 34, 4);
+			titleSimple = title.substring(6).trim();
+			title = null;
+		}
+		else if ( title.length() >= 7  && (title.charAt(3) == '[') && (title.charAt(6) == ']') && (title.substring(0, 2).compareTo("R:") == 0))
+		{
+			titleClass = getSpecifyBytes(data, 34, 4);
+			titleSimple = "R: " + title.substring(7).trim();
+			//System.out.printf("titleSimple:%s\n", titleSimple);
+			title = null;
+		}
+		else if (title.length() >= 3 && (title.charAt(0) == '□'))
+		{
+			titleSimple = title.substring(1).trim();
+			title = null;
+			//System.out.printf("titleSimple:%s\n", titleSimple);
+		}
+
+		String sLike = getSpecifyBytes(data, 9, 2);
+		if(Tool.isNumber(sLike))
+		{
+			like = Integer.parseInt(sLike);
+		}
+		else if(sLike.compareTo("爆") == 0)
+		{
+			like = 100;
+		}
+
+		String sFlag = getSpecifyBytes(data, 8, 1);
+		if(sFlag.length() > 0)
+			readFlag = sFlag.charAt(0);
+
+		postClass = getSpecifyBytes(data, 30, 2);
 		return 0;
 	}
 
@@ -950,4 +1260,26 @@ class BoardInfo{
 		
 		return 0;
 	}
+}
+
+class ColorEntry {
+	int code;
+	int value;
+	public ColorEntry(int code, int value)
+	{
+		this.code = code;
+		this.value = value;
+	}
+}
+
+class TColor {
+	static final ColorEntry RED = new ColorEntry(1, 0xffff0000); 
+	static final ColorEntry GREEN = new ColorEntry(2, 0xff00ff00);
+	static final ColorEntry YELLOW = new ColorEntry(3, 0xffffff00);
+	static final ColorEntry BLUE = new ColorEntry(4, 0xff0000ff);
+	static final ColorEntry PURPLE = new ColorEntry(5, 0xffff00ff);
+	static final ColorEntry DARKGREEN = new ColorEntry(6, 0xcc00cc00);
+	static final ColorEntry WHITE = new ColorEntry(7, 0xffffffff);
+	
+	static ColorEntry[] e = {RED, GREEN, YELLOW, BLUE, PURPLE, DARKGREEN, WHITE};
 }

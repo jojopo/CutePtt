@@ -1,32 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.cuteptt"
-    android:versionCode="1"
-    android:versionName="1.0" >
+    package="com.jojopo.cuteptt"
+    android:versionCode="3"
+    android:versionName="1.02" >
 
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="17" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name="com.example.cuteptt.MyGlobal"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" android:name=".MyGlobal">
+        android:theme="@style/AppTheme" >
         <activity
             android:name="com.example.cuteptt.MainActivity"
             android:label="@string/app_name" >
         </activity>
-        <activity android:name="com.example.cuteptt.DisplayMyFavoriteActivity" android:label="@string/title_activity_display_my_favorite">
+        <activity
+            android:name="com.example.cuteptt.DisplayMyFavoriteActivity"
+            android:label="@string/title_activity_display_my_favorite" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
+        <activity
+            android:name="com.example.cuteptt.ArticleListActivity"
+            android:label="@string/title_activity_article_list" >
+        </activity>
+        <activity
+            android:name="com.example.cuteptt.ArticlActivity"
+            android:label="@string/title_activity_articl" >
+        </activity>
     </application>
 
 </manifest>

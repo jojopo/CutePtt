@@ -1,0 +1,47 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    tools:context=".ArticleListActivity" >
+    
+    <ProgressBar
+    android:id="@+id/progressBar_BoardStatus"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:maxWidth="20dip"        
+    android:minWidth="20dip"
+    android:maxHeight="20dip"
+    android:minHeight="20dip"
+    android:visibility="invisible" />
+    
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:onClick="onSearch"
+        android:text="Button"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/textView_BoardStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="14dp"
+        android:text="TextView"
+        android:visibility="invisible" />
+    
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:divider="#222222"
+        android:dividerHeight="0.8dp" />
+
+
+</RelativeLayout>

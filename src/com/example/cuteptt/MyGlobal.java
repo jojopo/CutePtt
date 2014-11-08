@@ -7,7 +7,9 @@ import android.app.Application;
 public class MyGlobal extends Application {
 	private SocketClient socketclient;
 	private String account;
+	private String password;
 	private boolean isExit = false;
+	private int lastArticleNumber = 0;
 	
 	public SocketClient getSocketClient()
 	{
@@ -27,6 +29,26 @@ public class MyGlobal extends Application {
 	{
 		account = s;
 	}
+	
+	public int getLastArticleNumber()
+	{
+		return lastArticleNumber;
+	}
+	public void setLastArticleNumber(int n)
+	{
+		lastArticleNumber = n;
+	}
+	
+	public String getPassword()
+	{
+		return password;
+	}
+	public void setPassword(String s)
+	{
+		password = s;
+	}
+	
+	
 	
 	public boolean isExit()
 	{

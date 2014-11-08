@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.View; //view
 import android.view.Window;
 import android.widget.EditText;
+import com.jojopo.cuteptt.R;
 
 public class MainActivity extends Activity {
 
@@ -34,24 +35,28 @@ public class MainActivity extends Activity {
 		if(G.getSocketClient() != null)
 		{
 			SocketClient S = G.getSocketClient(); 
-			System.out.printf("check G.socketclient is not NULL\n");
+			//System.out.printf("check G.socketclient is not NULL\n");
 			S.terminal();
 			S.closeSocket();
 			G.setSocketClient(null);
 		}
 
 		EditText accountEdit = (EditText) findViewById(R.id.accountEditText);
+		EditText passwordEdit = (EditText) findViewById(R.id.passwordEditText);
 		String account = accountEdit.getText().toString();
-		saveLoginInfo(account);
+		String password = passwordEdit.getText().toString();
+		saveLoginInfo(account, password);
 		finish();
 	}
 	
-	private void saveLoginInfo(String account)
+	private void saveLoginInfo(String account, String password)
 	{
 		SharedPreferences setting = getSharedPreferences("cuteptt_login_info", 0);
 		setting.edit().putString("account", account)
 		.commit();
-		System.out.printf("save account:%s\n", account);
+		setting.edit().putString("password", password)
+		.commit();
+		//System.out.printf("save account:%s\n", account);
 	}
 	
 	@Override

@@ -7,15 +7,18 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="#000000"
     tools:context=".MainActivity" >
 
     <EditText
         android:id="@+id/accountEditText"
         android:layout_width="142dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="3dp"
         android:ems="10"
-        android:visibility="visible" >
-
+        android:textColor="#000000"
+        android:visibility="visible"
+		android:background="@drawable/tv_back" >
         <requestFocus />
     </EditText>
 
@@ -24,14 +27,17 @@
         android:layout_width="142dp"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:visibility="visible" />
+        android:inputType="textPassword"
+        android:textColor="#000000"
+        android:visibility="visible"
+        android:background="@drawable/tv_back" />
 
     <Button
         android:id="@+id/loginBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="login_submit"
-        android:text="Button1"
+        android:text="登入"
         android:visibility="visible" />
 
 </LinearLayout>
