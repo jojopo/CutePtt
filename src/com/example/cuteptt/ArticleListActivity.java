@@ -479,6 +479,9 @@ public class ArticleListActivity extends Activity {
 				//System.out.printf("top1:%d\n", firstNumber);
 				if(firstNumber == 1)
 					return;
+				
+				if(S.getSecondItemNumber() - firstNumber > 100000)
+					firstNumber += 100000;
 
 				targetNumber = (firstNumber - 10 < 1) ? 1 : firstNumber - 10;
 			}
@@ -486,6 +489,9 @@ public class ArticleListActivity extends Activity {
 			{
 				if(mPostList.latestLoadingNumber == 1)
 					return;
+				
+				if(S.getSecondItemNumber() - mPostList.latestLoadingNumber > 100000)
+					mPostList.latestLoadingNumber += 100000;
 				targetNumber = (mPostList.latestLoadingNumber - 10 < 1) ? 1 : mPostList.latestLoadingNumber - 10;
 			}
 

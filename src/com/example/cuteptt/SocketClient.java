@@ -435,6 +435,9 @@ if(true) {
 		if(Tool.isNumber(sNumber))
 		{
 			number = Integer.parseInt(sNumber);
+			
+			if(getSpecifyData(row, 0, 2).compareTo("1") == 0)
+				number += 100000;
 		}
 		else
 		{
@@ -459,6 +462,21 @@ if(true) {
 		if(Tool.isNumber(sNumber))
 		{
 			number = Integer.parseInt(sNumber);
+			
+			if(getSpecifyData(FIRST_LIST_ROW, 0, 2).compareTo("1") == 0)
+				number += 100000;
+		}
+		return number;
+	}
+	
+	public int getSecondItemNumber()
+	{
+		int number = -1;
+		String sNumber = getSpecifyData(FIRST_LIST_ROW+1, 0, 7).trim();
+		//String sNumber = getSpecifyData(FIRST_LIST_ROW, 1, 6).trim();
+		if(Tool.isNumber(sNumber))
+		{
+			number = Integer.parseInt(sNumber);
 		}
 		return number;
 	}
@@ -474,6 +492,9 @@ if(true) {
 			if(Tool.isNumber(sNumber))
 			{
 				number = Integer.parseInt(sNumber);
+				
+				if(getSpecifyData(i, 0, 2).compareTo("1") == 0)
+					number += 100000;
 				break;
 			}
 			else ;
@@ -1122,6 +1143,9 @@ class PostInfo{
 			number = Integer.parseInt(getSpecifyBytes(data, 2, 5));
 		else if(getSpecifyBytes(data, 2, 5).compareTo("¡¹") == 0)
 			number = 99999;
+		
+		if(getSpecifyBytes(data, 0, 2).compareTo("1") == 0)
+			number += 100000;
 
 		date = getSpecifyBytes(data, 11, 5);
 		author = getSpecifyBytes(data, 17, 13);
@@ -1171,6 +1195,9 @@ class PostInfo{
 			number = Integer.parseInt(getSpecifyBytes(data, 2, 5));
 		else if(getSpecifyBytes(data, 2, 5).compareTo("¡¹") == 0)
 			number = fake;
+		
+		if(getSpecifyBytes(data, 0, 2).compareTo("1") == 0)
+			number += 100000;
 
 		date = getSpecifyBytes(data, 11, 5);
 		author = getSpecifyBytes(data, 17, 13);
