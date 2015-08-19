@@ -414,13 +414,15 @@ public class ArticleListActivity extends Activity {
 	            int bottomItemNumber = S.getBottomItemsNumberThisPage();
 	            //System.out.printf("bottomItemNumber:%d\n", bottomItemNumber);
 	            
-	            int upto100000 = 0;
+	            int postOverFlow = 0;
 	            
-	            if(S.getSecondItemNumber() > 100000)
-	            {
-	            	upto100000 = 1;
-	            	S.hookData();
-	            }
+	            if(S.getSecondItemNumber() > 200000)
+	                postOverFlow = 2;
+	            else if(S.getSecondItemNumber() > 100000)
+	                postOverFlow = 1;
+
+	            if(postOverFlow > 0)
+	                S.hookData(postOverFlow);
 				
 				for(int i=S.FIRST_LIST_ROW+S.getItemsNumber()-1; i>=S.FIRST_LIST_ROW; i--)
                 {
@@ -465,7 +467,7 @@ public class ArticleListActivity extends Activity {
 			try{
 				
 			String query;
-			int upto100000 = 0;
+			int postOverFlow = 0;
 			
 			if(S.isInSubList())
 			{
@@ -490,10 +492,13 @@ public class ArticleListActivity extends Activity {
 				if(firstNumber == 1)
 					return;
 				
-				if(S.getSecondItemNumber() - firstNumber > 100000)
-				{
+				if(S.getSecondItemNumber() - firstNumber > 200000) {
+					firstNumber += 200000;
+					postOverFlow = 2;
+				}
+				else if(S.getSecondItemNumber() - firstNumber > 100000) {
 					firstNumber += 100000;
-					upto100000 = 1;
+					postOverFlow = 1;
 				}
 
 				targetNumber = (firstNumber - 10 < 1) ? 1 : firstNumber - 10;
@@ -503,10 +508,13 @@ public class ArticleListActivity extends Activity {
 				if(mPostList.latestLoadingNumber == 1)
 					return;
 				
-				if(S.getSecondItemNumber() - mPostList.latestLoadingNumber > 100000)
-				{
+				if(S.getSecondItemNumber() - mPostList.latestLoadingNumber > 200000) {
+					mPostList.latestLoadingNumber += 200000;
+					postOverFlow = 2;
+				}
+				else if(S.getSecondItemNumber() - mPostList.latestLoadingNumber > 100000) {
 					mPostList.latestLoadingNumber += 100000;
-					upto100000 = 1;
+					postOverFlow = 1;
 				}
 
 				targetNumber = (mPostList.latestLoadingNumber - 10 < 1) ? 1 : mPostList.latestLoadingNumber - 10;
@@ -529,8 +537,8 @@ public class ArticleListActivity extends Activity {
             }
             //System.out.printf("top2:%d\n",  S.getFirstItemNumber());
             
-            if(upto100000 == 1)
-            	S.hookData();
+            if(postOverFlow > 0)
+                S.hookData(postOverFlow);
 
             if (true)
             for(int i=S.FIRST_LIST_ROW+S.getItemsNumber()-1; i>=S.FIRST_LIST_ROW; i--)

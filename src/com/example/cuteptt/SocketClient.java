@@ -116,12 +116,12 @@ public class SocketClient extends java.lang.Thread{
 		}
 	}
 	
-	public void hookData()
+	public void hookData(int overflow)
 	{
 		for(int i=FIRST_LIST_ROW; i<=LAST_LIST_ROW; i++)
 		{
 			data[i][0] = ' ';
-			data[i][1] = '1';
+			data[i][1] = (byte)(overflow + 48);
 		}
 	}
 
@@ -447,6 +447,8 @@ if(true) {
 			
 			if(getSpecifyData(row, 0, 2).compareTo("1") == 0)
 				number += 100000;
+			else if(getSpecifyData(row, 0, 2).compareTo("2") == 0)
+				number += 200000;
 		}
 		else
 		{
@@ -474,6 +476,8 @@ if(true) {
 			
 			if(getSpecifyData(FIRST_LIST_ROW, 0, 2).compareTo("1") == 0)
 				number += 100000;
+			else if(getSpecifyData(FIRST_LIST_ROW, 0, 2).compareTo("2") == 0)
+				number += 200000;
 		}
 		return number;
 	}
@@ -504,6 +508,8 @@ if(true) {
 				
 				if(getSpecifyData(i, 0, 2).compareTo("1") == 0)
 					number += 100000;
+				else if(getSpecifyData(i, 0, 2).compareTo("2") == 0)
+					number += 200000;
 				break;
 			}
 			else ;
@@ -1155,6 +1161,8 @@ class PostInfo{
 		
 		if(getSpecifyBytes(data, 0, 2).compareTo("1") == 0)
 			number += 100000;
+		else if(getSpecifyBytes(data, 0, 2).compareTo("2") == 0)
+			number += 200000;
 
 		date = getSpecifyBytes(data, 11, 5);
 		author = getSpecifyBytes(data, 17, 13);
@@ -1207,6 +1215,8 @@ class PostInfo{
 		
 		if(getSpecifyBytes(data, 0, 2).compareTo("1") == 0)
 			number += 100000;
+		else if(getSpecifyBytes(data, 0, 2).compareTo("2") == 0)
+			number += 200000;
 
 		date = getSpecifyBytes(data, 11, 5);
 		author = getSpecifyBytes(data, 17, 13);
