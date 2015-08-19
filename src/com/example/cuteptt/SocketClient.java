@@ -115,6 +115,15 @@ public class SocketClient extends java.lang.Thread{
 		//	System.out.printf("<row:%d col:%d %c> ", cursorRow, cursorColumn, writeByte);
 		}
 	}
+	
+	public void hookData()
+	{
+		for(int i=FIRST_LIST_ROW; i<=LAST_LIST_ROW; i++)
+		{
+			data[i][0] = ' ';
+			data[i][1] = '1';
+		}
+	}
 
 	public void clearData()
 	{

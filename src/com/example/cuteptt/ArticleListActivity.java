@@ -413,6 +413,14 @@ public class ArticleListActivity extends Activity {
 				int lastItemNumber = S.getLastItemNumber();
 	            int bottomItemNumber = S.getBottomItemsNumberThisPage();
 	            //System.out.printf("bottomItemNumber:%d\n", bottomItemNumber);
+	            
+	            int upto100000 = 0;
+	            
+	            if(S.getSecondItemNumber() > 100000)
+	            {
+	            	upto100000 = 1;
+	            	S.hookData();
+	            }
 				
 				for(int i=S.FIRST_LIST_ROW+S.getItemsNumber()-1; i>=S.FIRST_LIST_ROW; i--)
                 {
@@ -424,6 +432,7 @@ public class ArticleListActivity extends Activity {
                         {
                         	fakeBottomItemNumber = lastItemNumber+bottomItemNumber;
                         	bottomItemNumber--;
+                        	
                         	pInfo.fill(S.data[i], fakeBottomItemNumber);
                         }
                         else
@@ -456,6 +465,7 @@ public class ArticleListActivity extends Activity {
 			try{
 				
 			String query;
+			int upto100000 = 0;
 			
 			if(S.isInSubList())
 			{
@@ -481,7 +491,10 @@ public class ArticleListActivity extends Activity {
 					return;
 				
 				if(S.getSecondItemNumber() - firstNumber > 100000)
+				{
 					firstNumber += 100000;
+					upto100000 = 1;
+				}
 
 				targetNumber = (firstNumber - 10 < 1) ? 1 : firstNumber - 10;
 			}
@@ -491,7 +504,11 @@ public class ArticleListActivity extends Activity {
 					return;
 				
 				if(S.getSecondItemNumber() - mPostList.latestLoadingNumber > 100000)
+				{
 					mPostList.latestLoadingNumber += 100000;
+					upto100000 = 1;
+				}
+
 				targetNumber = (mPostList.latestLoadingNumber - 10 < 1) ? 1 : mPostList.latestLoadingNumber - 10;
 			}
 
@@ -511,6 +528,9 @@ public class ArticleListActivity extends Activity {
                     Thread.sleep(10);
             }
             //System.out.printf("top2:%d\n",  S.getFirstItemNumber());
+            
+            if(upto100000 == 1)
+            	S.hookData();
 
             if (true)
             for(int i=S.FIRST_LIST_ROW+S.getItemsNumber()-1; i>=S.FIRST_LIST_ROW; i--)
